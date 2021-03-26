@@ -2,6 +2,8 @@ package rest
 
 import (
 	"github.com/LukaszKokot/go-clean-template/config"
+	"github.com/LukaszKokot/go-clean-template/pkg/context"
+	"github.com/LukaszKokot/go-clean-template/pkg/ports/http"
 
 	"github.com/jmoiron/sqlx"
 	echo "github.com/labstack/echo/v4"
@@ -22,25 +24,38 @@ type Options struct {
 type defaultServer struct {
 	e        *echo.Echo
 	database *sqlx.DB
+
+	ports struct {
+		user       http.UserPort
+		userAvatar http.UserAvatarPort
+	}
 }
 
 // NewServer builds a new startable web server
 // We're going to hide here that we use Echo, nobody needs to know from the outside
 func NewServer(options Options) (Server, error) {
 	e := echo.New()
-
-	// This is the place where
+	var database *sqlx.DB // We should connect to the database and provide it here
 
 	s := &defaultServer{
 		e:        e,
-		database: nil, // We should connect to the database and provide it here
+		database: database,
 	}
 
-	// When we have our server and database, we can now configure the routes that
-	// will connect HTTP endpoints to our handlers.
+	// We configure our HTTP ports
+	s.ports.user = context.NewUserPort(database)
+	s.ports.userAvatar = context.NewUserAvatarPort(database)
+
+	// And finally we connect the HTTP endpoints with our ports
+	s.e.POST("users", s.ports.user.Register)
+	s.e.PUT("users/:userID", s.ports.userAvatar.CreateOrUpdate)
+
+	// What's missing here?
 	//
-	// For example:
-	// s.e.POST("users", s.h.user.Register)
+	// The configured routes don't have any security middleware.
+	// For example, the avatar update route should have a middleware that
+	// checks whether the user making the request has the right credentials
+	// for updating that user's adapter.
 
 	return s, nil
 }
