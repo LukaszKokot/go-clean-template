@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/LukaszKokot/go-clean-template/config"
-	"github.com/LukaszKokot/go-clean-template/rest/server"
+	"github.com/LukaszKokot/go-clean-template/rest"
 
 	"github.com/spf13/cobra"
 )
@@ -18,7 +18,7 @@ func MainCommand() *cobra.Command {
 
 func bootWebServer(cmd *cobra.Command, args []string) {
 	// Here is where we configure our web server and start it
-	server.NewServer(server.Options{
+	rest.NewServer(rest.Options{
 		Web: config.GetWebServerConfiguration(),
 	})
 }
