@@ -20,6 +20,10 @@ func (r defaultUserRepository) Create(user models.User) error {
 	return nil
 }
 
+func (r defaultUserRepository) FindByEmail(email string) (*models.User, error) {
+	return nil, nil
+}
+
 func (r defaultUserRepository) FindByID(id string) (*models.User, error) {
 	return nil, nil
 }
