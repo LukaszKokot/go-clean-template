@@ -7,7 +7,7 @@ import (
 // MainCommand starts the GRPC server
 func MainCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "web",
+		Use:   "grpc",
 		Short: "Starts the GRPC server",
 		Run:   bootServer,
 	}
